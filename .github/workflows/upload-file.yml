@@ -1,0 +1,59 @@
+name: Upload File
+
+on:
+  workflow_dispatch:
+
+jobs:
+  cloud-runner:
+    name: Upload File - Cloud Runner
+    runs-on: ubuntu-latest
+    steps:
+    - name: Code Checkout
+      uses: actions/checkout@v4
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install Dependencies
+      shell: bash
+      run: |
+        pip install -r requirements.txt
+
+    - name: Execute Python Script
+      shell: bash
+      env:
+        GH_PAT: ${{ secrets.GH_PAT }}
+        OWNER: ${{ github.repository_owner }}
+        REPO: ${{ github.event.repository.name }}
+        RUNNER_NAME: ${{ runner.name }}
+      run: |
+        python -u upload_file.py
+
+  on-prem-runner:
+    name: Upload File - On-Premise Runner
+    runs-on: [ self-hosted, Linux, org-runner ]
+    steps:
+    - name: Code Checkout
+      uses: actions/checkout@v4
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install Dependencies
+      shell: bash
+      run: |
+        pip install -r requirements.txt
+
+    - name: Execute Python Script
+      shell: bash
+      env:
+        GH_PAT: ${{ secrets.GH_PAT }}
+        OWNER: ${{ github.repository_owner }}
+        REPO: ${{ github.event.repository.name }}
+        RUNNER_NAME: ${{ runner.name }}
+      run: |
+        python -u upload_file.py
