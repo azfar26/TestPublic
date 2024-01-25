@@ -33,19 +33,16 @@ jobs:
 
   on-prem-runner:
     name: Upload File - On-Premise Runner
-    runs-on: [ self-hosted, Linux, org-runner ]
+    runs-on: [ self-hosted, Linux, personal ]
     steps:
     - name: Code Checkout
       uses: actions/checkout@v4
-    
-    - name: Setup Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
 
     - name: Install Dependencies
       shell: bash
       run: |
+        python -m venv venv
+        source ./venv/bin/activate
         pip install -r requirements.txt
 
     - name: Execute Python Script
@@ -56,4 +53,5 @@ jobs:
         REPO: ${{ github.event.repository.name }}
         RUNNER_NAME: ${{ runner.name }}
       run: |
+        source ./venv/bin/activate
         python -u upload_file.py
